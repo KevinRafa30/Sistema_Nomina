@@ -1,0 +1,121 @@
+{% extends 'nomina/base.html' %}
+{% load static %}
+
+{% block title %}Empleados - Sistema de Nómina{% endblock %}
+{% block page_title %}Empleados{% endblock %}
+{% block breadcrumb_title %}Gestión de Empleados{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-12">
+    <div class="card my-4">
+      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 px-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+          <h6 class="text-white text-capitalize ps-3 mb-2 mb-md-0">Listado de Empleados</h6>
+          <div class="d-flex align-items-center pe-3">
+            <a href="{% url 'nomina:empleado_create' %}" class="btn btn-white btn-sm mb-0 text-primary font-weight-bold">
+              <i class="material-icons text-sm me-1">person_add</i> Registrar Empleado
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body px-4 pb-2">
+        <!-- Buscador por Nombre o Cédula -->
+        <div class="row mb-3 mt-2">
+          <div class="col-md-6 col-lg-4">
+            <form method="GET" action="{% url 'nomina:empleados_list' %}" class="d-flex align-items-center">
+              <div class="input-group input-group-outline w-100 {% if busqueda %}is-filled{% endif %}">
+                <input type="text" name="q" class="form-control" placeholder="Buscar por nombre o cédula..." value="{% if busqueda %}{{ busqueda }}{% elif q %}{{ q }}{% endif %}">
+                <button class="btn bg-gradient-primary mb-0" type="submit">
+                  <i class="material-icons">search</i>
+                </button>
+              </div>
+            </form>
+          </div>
+          {% if busqueda %}
+          <div class="col-md-6 d-flex align-items-center mt-2 mt-md-0">
+            <span class="text-xs text-muted me-2">Filtrado por: <strong>"{{ busqueda }}"</strong></span>
+            <a href="{% url 'nomina:empleados_list' %}" class="btn btn-link text-secondary btn-sm p-0 mb-0">Limpiar filtro</a>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Tabla de Empleados -->
+        <div class="table-responsive p-0">
+          <table class="table align-items-center mb-0">
+            <thead>
+              <tr>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">ID</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Cédula</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Nombre</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Departamento</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Puesto</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Salario Mensual</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">ID Nómina</th>
+                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Estado</th>
+                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for empleado in empleados %}
+              <tr>
+                <td>
+                  <p class="text-xs font-weight-bold mb-0 ps-2">{{ empleado.id }}</p>
+                </td>
+                <td>
+                  <p class="text-xs font-weight-bold mb-0">{{ empleado.cedula }}</p>
+                </td>
+                <td>
+                  <div class="d-flex px-2 py-1">
+                    <div class="d-flex flex-column justify-content-center">
+                      <h6 class="mb-0 text-sm">{{ empleado.nombre }}</h6>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <p class="text-xs font-weight-bold mb-0">{{ empleado.departamento|default:"-" }}</p>
+                </td>
+                <td>
+                  <p class="text-xs font-weight-bold mb-0">{{ empleado.puesto|default:"-" }}</p>
+                </td>
+                <td>
+                  <p class="text-xs font-weight-bolder text-success mb-0">RD$ {{ empleado.salario_mensual|floatformat:2 }}</p>
+                </td>
+                <td>
+                  <span class="badge badge-sm bg-gradient-light text-dark font-weight-bold">{{ empleado.id_nomina }}</span>
+                </td>
+                <td class="align-middle text-center text-sm">
+                  {% if empleado.estado|default_if_none:True %}
+                    <span class="badge badge-sm bg-gradient-success">Activo</span>
+                  {% else %}
+                    <span class="badge badge-sm bg-gradient-secondary">Inactivo</span>
+                  {% endif %}
+                </td>
+                <td class="align-middle text-center">
+                  <a href="{% url 'nomina:empleado_update' empleado.pk %}" class="btn btn-link text-primary font-weight-bold text-xs p-2 mb-0" data-toggle="tooltip" data-original-title="Editar empleado">
+                    <i class="material-icons text-sm me-1">edit</i>Editar
+                  </a>
+                  <a href="{% url 'nomina:empleado_toggle_estado' empleado.pk %}" class="btn btn-link text-warning font-weight-bold text-xs p-2 mb-0" data-toggle="tooltip" data-original-title="Alternar estado">
+                    <i class="material-icons text-sm me-1">sync</i>Alternar
+                  </a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="9" class="text-center py-4">
+                  <div class="text-center">
+                    <i class="material-icons text-secondary" style="font-size: 3rem;">group_off</i>
+                    <p class="text-sm text-secondary mt-2 mb-0">No se encontraron empleados registrados.</p>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
