@@ -4,7 +4,7 @@ Sistema web de administración de nóminas desarrollado para la asignatura **Nó
 
 ---
 
-## 📌 Alcance Funcional del Sistema
+##  Alcance Funcional del Sistema
 
 El sistema cubre la gestión completa del ciclo de nóminas a través de interfaces administrativas modernas:
 
@@ -18,7 +18,7 @@ El sistema cubre la gestión completa del ciclo de nóminas a través de interfa
 
 ---
 
-## 🛠️ Stack Tecnológico (Enfoque Híbrido)
+##  Stack Tecnológico (Enfoque Híbrido)
 
 * **Capa Open Source:**
   - **Backend:** Python 3.x con Django Framework.
@@ -30,7 +30,7 @@ El sistema cubre la gestión completa del ciclo de nóminas a través de interfa
 
 ---
 
-## 📂 Estructura del Proyecto
+##  Estructura del Proyecto
 
 ```text
 Sistema_Nomina/
@@ -51,7 +51,7 @@ Sistema_Nomina/
 
 ---
 
-## 🚀 Guía de Instalación y Puesta en Marcha
+##  Guía de Instalación y Puesta en Marcha
 
 Sigue estos pasos para clonar y ejecutar el proyecto en tu equipo local:
 
@@ -92,7 +92,7 @@ Abre tu navegador e ingresa a `http://127.0.0.1:8000/`.
 
 ---
 
-## 📋 Estándares de Trabajo en Git
+##  Estándares de Trabajo en Git
 
 Para mantener la trazabilidad de los cambios en el repositorio, se sigue la regla de **commits atómicos individuales por archivo modificado**, utilizando mensajes concisos en español:
 * `feat(archivo): descripción` para nuevas características.
