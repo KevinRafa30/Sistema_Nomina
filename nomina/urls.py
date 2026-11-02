@@ -1,9 +1,14 @@
 from django.urls import path
 from . import views
+from django.views.generic import RedirectView
 
 app_name = 'nomina'
 
 urlpatterns = [
+
+    # Redirección de la raíz a la lista de empleados
+    path('', RedirectView.as_view(url='empleados/', permanent=False), name='nomina_home'),
+    
     # Empleados
     path('empleados/', views.empleados_list, name='empleados_list'),
     path('empleados/crear/', views.empleado_create, name='empleado_create'),

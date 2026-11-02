@@ -36,7 +36,7 @@ def empleados_list(request):
             Q(cedula__icontains=busqueda) |
             Q(cedula__icontains=busqueda_limpia)
         )
-    return render(request, 'nomina/empleados_list.html', {
+    return render(request, 'nomina/empleados/list.html', {
         'empleados': empleados,
         'busqueda': busqueda,
         'q': busqueda,
@@ -51,7 +51,7 @@ def empleado_create(request):
             return redirect('nomina:empleados_list')
     else:
         form = EmpleadoForm()
-    return render(request, 'nomina/empleado_form.html', {
+    return render(request, 'nomina/empleados/form.html', {
         'form': form,
         'titulo': 'Registrar Empleado',
     })
@@ -66,7 +66,7 @@ def empleado_update(request, pk):
             return redirect('nomina:empleados_list')
     else:
         form = EmpleadoForm(instance=empleado)
-    return render(request, 'nomina/empleado_form.html', {
+    return render(request, 'nomina/empleados/form.html', {
         'form': form,
         'titulo': 'Editar Empleado',
         'empleado': empleado,
@@ -86,7 +86,7 @@ def empleado_toggle_estado(request, pk):
 # ==========================================
 def tipos_ingreso_list(request):
     tipos = TipoIngreso.objects.all()
-    return render(request, 'nomina/tipos_ingreso_list.html', {
+    return render(request, 'nomina/ingresos/list.html', {
         'tipos': tipos,
         'tipos_ingreso': tipos,
     })
@@ -100,7 +100,7 @@ def tipo_ingreso_create(request):
             return redirect('nomina:tipos_ingreso_list')
     else:
         form = TipoIngresoForm()
-    return render(request, 'nomina/tipo_ingreso_form.html', {
+    return render(request, 'nomina/ingresos/form.html', {
         'form': form,
         'titulo': 'Nuevo Tipo de Ingreso',
     })
@@ -115,7 +115,7 @@ def tipo_ingreso_update(request, pk):
             return redirect('nomina:tipos_ingreso_list')
     else:
         form = TipoIngresoForm(instance=tipo)
-    return render(request, 'nomina/tipo_ingreso_form.html', {
+    return render(request, 'nomina/ingresos/form.html', {
         'form': form,
         'titulo': 'Editar Tipo de Ingreso',
         'tipo': tipo,
@@ -135,7 +135,7 @@ def tipo_ingreso_toggle_estado(request, pk):
 # ==========================================
 def tipos_deduccion_list(request):
     tipos = TipoDeduccion.objects.all()
-    return render(request, 'nomina/tipos_deduccion_list.html', {
+    return render(request, 'nomina/deducciones/list.html', {
         'tipos': tipos,
         'tipos_deduccion': tipos,
     })
@@ -149,7 +149,7 @@ def tipo_deduccion_create(request):
             return redirect('nomina:tipos_deduccion_list')
     else:
         form = TipoDeduccionForm()
-    return render(request, 'nomina/tipo_deduccion_form.html', {
+    return render(request, 'nomina/deducciones/form.html', {
         'form': form,
         'titulo': 'Nuevo Tipo de Deducción',
     })
@@ -164,7 +164,7 @@ def tipo_deduccion_update(request, pk):
             return redirect('nomina:tipos_deduccion_list')
     else:
         form = TipoDeduccionForm(instance=tipo)
-    return render(request, 'nomina/tipo_deduccion_form.html', {
+    return render(request, 'nomina/deducciones/form.html', {
         'form': form,
         'titulo': 'Editar Tipo de Deducción',
         'tipo': tipo,
@@ -184,15 +184,8 @@ def tipo_deduccion_toggle_estado(request, pk):
 # ==========================================
 def transacciones_list(request):
     transacciones = Transaccion.objects.select_related('empleado', 'tipo_ingreso', 'tipo_deduccion').all()
-    for t in transacciones:
-        if t.tipo_transaccion == Transaccion.TipoTransaccion.INGRESO:
-            t.concepto = t.tipo_ingreso.nombre if t.tipo_ingreso else '-'
-        elif t.tipo_transaccion == Transaccion.TipoTransaccion.DEDUCCION:
-            t.concepto = t.tipo_deduccion.nombre if t.tipo_deduccion else '-'
-        else:
-            t.concepto = '-'
-        t.tipo = t.tipo_transaccion
-    return render(request, 'nomina/transacciones_list.html', {'transacciones': transacciones})
+    return render(request, 'nomina/transacciones/list.html', {'transacciones': transacciones})
+    
 
 
 def transaccion_create(request):
@@ -203,7 +196,7 @@ def transaccion_create(request):
             return redirect('nomina:transacciones_list')
     else:
         form = TransaccionForm()
-    return render(request, 'nomina/transaccion_form.html', {
+    return render(request, 'nomina/transacciones/form.html', {
         'form': form,
         'titulo': 'Nueva Transacción',
     })
@@ -218,7 +211,7 @@ def transaccion_update(request, pk):
             return redirect('nomina:transacciones_list')
     else:
         form = TransaccionForm(instance=transaccion)
-    return render(request, 'nomina/transaccion_form.html', {
+    return render(request, 'nomina/transacciones/form.html', {
         'form': form,
         'titulo': 'Editar Transacción',
         'transaccion': transaccion,

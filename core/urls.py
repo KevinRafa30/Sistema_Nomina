@@ -6,8 +6,10 @@ The `urlpatterns` list routes URLs to views. For more information please see:
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic import RedirectView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('nomina/', include('nomina.urls')),
+    path('', RedirectView.as_view(url='nomina/', permanent=False)),  # Redirige la raíz
 ]
