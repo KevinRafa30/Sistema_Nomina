@@ -1,0 +1,109 @@
+{% extends 'nomina/base.html' %}
+{% load static %}
+
+{% block title %}Transacciones - Sistema de Nómina{% endblock %}
+{% block page_title %}Transacciones{% endblock %}
+{% block breadcrumb_title %}Histórico de Transacciones{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-12">
+    <div class="card my-4">
+      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 px-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+          <h6 class="text-white text-capitalize ps-3 mb-2 mb-md-0">Histórico de Transacciones</h6>
+          <div class="d-flex align-items-center pe-3">
+            <a href="{% url 'nomina:transaccion_create' %}" class="btn btn-white btn-sm mb-0 text-primary font-weight-bold">
+              <i class="material-icons text-sm me-1">add</i> + Nueva Transacción
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body px-4 pb-2">
+        <div class="table-responsive p-0">
+          <table class="table align-items-center mb-0">
+            <thead>
+              <tr>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">ID</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Empleado</th>
+                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tipo de Transacción</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Concepto</th>
+                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Fecha</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Monto</th>
+                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Estado</th>
+                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for transaccion in transacciones %}
+              <tr>
+                <td>
+                  <p class="text-xs font-weight-bold mb-0 ps-2">#{{ transaccion.id }}</p>
+                </td>
+                <td>
+                  <div class="d-flex px-2 py-1">
+                    <div class="d-flex flex-column justify-content-center">
+                      <h6 class="mb-0 text-sm">{{ transaccion.empleado.nombre }}</h6>
+                      <p class="text-xs text-secondary mb-0">{{ transaccion.empleado.cedula }}</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="align-middle text-center text-sm">
+                  {% if transaccion.tipo_transaccion == 'Ingreso' or transaccion.tipo == 'Ingreso' %}
+                    <span class="badge badge-sm bg-gradient-success">Ingreso</span>
+                  {% else %}
+                    <span class="badge badge-sm bg-gradient-danger">Deducción</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <p class="text-xs font-weight-bold mb-0">
+                    {{ transaccion.concepto|default:transaccion.tipo_ingreso.nombre|default:transaccion.tipo_deduccion.nombre|default:"-" }}
+                  </p>
+                </td>
+                <td class="align-middle text-center">
+                  <span class="text-secondary text-xs font-weight-bold">{{ transaccion.fecha|date:"d/m/Y" }}</span>
+                </td>
+                <td>
+                  <p class="text-xs font-weight-bolder {% if transaccion.tipo_transaccion == 'Ingreso' or transaccion.tipo == 'Ingreso' %}text-success{% else %}text-danger{% endif %} mb-0">
+                    RD$ {{ transaccion.monto|floatformat:2 }}
+                  </p>
+                </td>
+                <td class="align-middle text-center text-sm">
+                  {% if transaccion.estado == 'Procesada' %}
+                    <span class="badge badge-sm bg-gradient-success">Procesada</span>
+                  {% elif transaccion.estado == 'Pendiente' %}
+                    <span class="badge badge-sm bg-gradient-warning">Pendiente</span>
+                  {% elif transaccion.estado == 'Cancelada' %}
+                    <span class="badge badge-sm bg-gradient-danger">Cancelada</span>
+                  {% else %}
+                    <span class="badge badge-sm bg-gradient-secondary">{{ transaccion.estado }}</span>
+                  {% endif %}
+                </td>
+                <td class="align-middle text-center">
+                  <a href="{% url 'nomina:transaccion_update' transaccion.pk %}" class="btn btn-link text-primary font-weight-bold text-xs p-2 mb-0" data-toggle="tooltip" data-original-title="Editar transacción">
+                    <i class="material-icons text-sm me-1">edit</i>Editar
+                  </a>
+                  <a href="{% url 'nomina:transaccion_toggle_estado' transaccion.pk %}" class="btn btn-link text-warning font-weight-bold text-xs p-2 mb-0" data-toggle="tooltip" data-original-title="Alternar estado">
+                    <i class="material-icons text-sm me-1">sync</i>Alternar
+                  </a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="8" class="text-center py-4">
+                  <div class="text-center">
+                    <i class="material-icons text-secondary" style="font-size: 3rem;">receipt_long</i>
+                    <p class="text-sm text-secondary mt-2 mb-0">No hay transacciones registradas.</p>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
