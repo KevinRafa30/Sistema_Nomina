@@ -1,0 +1,55 @@
+{% if tipo == 'Ingreso' or tipo_transaccion == 'Ingreso' %}
+  <label class="form-label font-weight-bold text-dark text-sm">Concepto de Ingreso <span class="text-danger">*</span></label>
+  <div class="input-group input-group-outline w-100 is-filled">
+    <select name="tipo_ingreso" id="id_concepto" class="form-control form-select" required>
+      <option value="">-- Seleccione un tipo de ingreso --</option>
+      {% for concepto in conceptos %}
+        <option value="{{ concepto.id }}" {% if form.tipo_ingreso.value|stringformat:"s" == concepto.id|stringformat:"s" %}selected{% endif %}>
+          {{ concepto.nombre }}{% if concepto.depende_de_salario %} (Depende de salario){% endif %}
+        </option>
+      {% empty %}
+        {% if ingresos %}
+          {% for concepto in ingresos %}
+            <option value="{{ concepto.id }}" {% if form.tipo_ingreso.value|stringformat:"s" == concepto.id|stringformat:"s" %}selected{% endif %}>
+              {{ concepto.nombre }}{% if concepto.depende_de_salario %} (Depende de salario){% endif %}
+            </option>
+          {% endfor %}
+        {% endif %}
+      {% endfor %}
+    </select>
+  </div>
+  {% if form.tipo_ingreso.errors %}
+    <div class="text-danger text-xs mt-1">{{ form.tipo_ingreso.errors|striptags }}</div>
+  {% endif %}
+{% elif tipo == 'Deducción' or tipo == 'Deduccion' or tipo_transaccion == 'Deducción' or tipo_transaccion == 'Deduccion' %}
+  <label class="form-label font-weight-bold text-dark text-sm">Concepto de Deducción <span class="text-danger">*</span></label>
+  <div class="input-group input-group-outline w-100 is-filled">
+    <select name="tipo_deduccion" id="id_concepto" class="form-control form-select" required>
+      <option value="">-- Seleccione un tipo de deducción --</option>
+      {% for concepto in conceptos %}
+        <option value="{{ concepto.id }}" {% if form.tipo_deduccion.value|stringformat:"s" == concepto.id|stringformat:"s" %}selected{% endif %}>
+          {{ concepto.nombre }}{% if concepto.depende_de_salario %} (Depende de salario){% endif %}
+        </option>
+      {% empty %}
+        {% if deducciones %}
+          {% for concepto in deducciones %}
+            <option value="{{ concepto.id }}" {% if form.tipo_deduccion.value|stringformat:"s" == concepto.id|stringformat:"s" %}selected{% endif %}>
+              {{ concepto.nombre }}{% if concepto.depende_de_salario %} (Depende de salario){% endif %}
+            </option>
+          {% endfor %}
+        {% endif %}
+      {% endfor %}
+    </select>
+  </div>
+  {% if form.tipo_deduccion.errors %}
+    <div class="text-danger text-xs mt-1">{{ form.tipo_deduccion.errors|striptags }}</div>
+  {% endif %}
+{% else %}
+  <label class="form-label font-weight-bold text-dark text-sm">Concepto <span class="text-danger">*</span></label>
+  <div class="input-group input-group-outline w-100 is-filled">
+    <select name="concepto" id="id_concepto" class="form-control form-select" disabled>
+      <option value="">-- Primero seleccione el Tipo de Transacción --</option>
+    </select>
+  </div>
+  <small class="text-muted text-xxs">Seleccione si es Ingreso o Deducción para cargar los conceptos activos.</small>
+{% endif %}
