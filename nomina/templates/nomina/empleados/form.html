@@ -1,0 +1,127 @@
+{% extends 'nomina/base.html' %}
+{% load static %}
+
+{% block title %}{{ titulo|default:"Formulario de Empleado" }} - Sistema de Nómina{% endblock %}
+{% block page_title %}Empleados{% endblock %}
+{% block breadcrumb_title %}{{ titulo|default:"Formulario de Empleado" }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-8 col-md-10 mx-auto">
+    <div class="card my-4">
+      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 px-3">
+          <h6 class="text-white text-capitalize ps-3 mb-0">{{ titulo|default:"Registrar Empleado" }}</h6>
+        </div>
+      </div>
+
+      <div class="card-body px-4 pb-4 pt-3">
+        <form method="POST" role="form" class="text-start">
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+          <div class="alert alert-danger text-white mb-4" role="alert">
+            {{ form.non_field_errors }}
+          </div>
+          {% endif %}
+
+          <div class="row">
+            <!-- Cédula -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label font-weight-bold text-dark text-sm">Cédula <span class="text-danger">*</span></label>
+              <div class="input-group input-group-outline w-100 is-filled">
+                <input type="text" name="cedula" id="id_cedula" class="form-control" placeholder="Ej. 402-0057193-9" value="{{ form.cedula.value|default:'' }}" required>
+              </div>
+              <small class="text-muted text-xxs">Formato dominicano: 11 dígitos con o sin guiones.</small>
+              {% if form.cedula.errors %}
+              <div class="text-danger text-xs mt-1">
+                {{ form.cedula.errors|striptags }}
+              </div>
+              {% endif %}
+            </div>
+
+            <!-- Nombre -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label font-weight-bold text-dark text-sm">Nombre Completo <span class="text-danger">*</span></label>
+              <div class="input-group input-group-outline w-100 is-filled">
+                <input type="text" name="nombre" id="id_nombre" class="form-control" placeholder="Nombre completo del empleado" value="{{ form.nombre.value|default:'' }}" required>
+              </div>
+              {% if form.nombre.errors %}
+              <div class="text-danger text-xs mt-1">
+                {{ form.nombre.errors|striptags }}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="row">
+            <!-- Departamento (opcional) -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label font-weight-bold text-dark text-sm">Departamento <span class="text-secondary text-xs">(opcional)</span></label>
+              <div class="input-group input-group-outline w-100 is-filled">
+                <input type="text" name="departamento" id="id_departamento" class="form-control" placeholder="Ej. Contabilidad, Tecnología" value="{{ form.departamento.value|default:'' }}">
+              </div>
+              {% if form.departamento.errors %}
+              <div class="text-danger text-xs mt-1">
+                {{ form.departamento.errors|striptags }}
+              </div>
+              {% endif %}
+            </div>
+
+            <!-- Puesto (opcional) -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label font-weight-bold text-dark text-sm">Puesto <span class="text-secondary text-xs">(opcional)</span></label>
+              <div class="input-group input-group-outline w-100 is-filled">
+                <input type="text" name="puesto" id="id_puesto" class="form-control" placeholder="Ej. Analista Financiero, Desarrollador" value="{{ form.puesto.value|default:'' }}">
+              </div>
+              {% if form.puesto.errors %}
+              <div class="text-danger text-xs mt-1">
+                {{ form.puesto.errors|striptags }}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="row">
+            <!-- Salario Mensual -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label font-weight-bold text-dark text-sm">Salario Mensual (RD$) <span class="text-danger">*</span></label>
+              <div class="input-group input-group-outline w-100 is-filled">
+                <input type="number" step="0.01" min="0.01" name="salario_mensual" id="id_salario_mensual" class="form-control" placeholder="0.00" value="{{ form.salario_mensual.value|default:'' }}" required>
+              </div>
+              <small class="text-muted text-xxs">Debe ser un valor positivo mayor que cero.</small>
+              {% if form.salario_mensual.errors %}
+              <div class="text-danger text-xs mt-1">
+                {{ form.salario_mensual.errors|striptags }}
+              </div>
+              {% endif %}
+            </div>
+
+            <!-- ID Nómina -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label font-weight-bold text-dark text-sm">ID Nómina <span class="text-danger">*</span></label>
+              <div class="input-group input-group-outline w-100 is-filled">
+                <input type="text" name="id_nomina" id="id_nomina" class="form-control" placeholder="Ej. NOM-001" value="{{ form.id_nomina.value|default:'' }}" required>
+              </div>
+              {% if form.id_nomina.errors %}
+              <div class="text-danger text-xs mt-1">
+                {{ form.id_nomina.errors|striptags }}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end mt-4">
+            <a href="{% url 'nomina:empleados_list' %}" class="btn btn-outline-secondary me-2 mb-0">
+              <i class="material-icons text-sm me-1">arrow_back</i> Cancelar
+            </a>
+            <button type="submit" class="btn bg-gradient-primary mb-0">
+              <i class="material-icons text-sm me-1">save</i> Guardar Empleado
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
