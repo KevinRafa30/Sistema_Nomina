@@ -1,0 +1,144 @@
+{% extends 'nomina/base.html' %}
+{% load static %}
+
+{% block title %}Registrar Transacción - Sistema de Nómina{% endblock %}
+{% block page_title %}Transacciones{% endblock %}
+{% block breadcrumb_title %}Registrar Transacción{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-8 col-md-10 mx-auto">
+    <div class="card my-4">
+      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 px-3">
+          <h6 class="text-white text-capitalize ps-3 mb-0">Registrar Transacción</h6>
+        </div>
+      </div>
+
+      <div class="card-body px-4 pb-4 pt-3">
+        <form method="POST" role="form" class="text-start">
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+          <div class="alert alert-danger text-white mb-4" role="alert">
+            {{ form.non_field_errors }}
+          </div>
+          {% endif %}
+
+          <div class="row">
+            <!-- Selector de Empleado -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label font-weight-bold text-dark text-sm">Empleado <span class="text-danger">*</span></label>
+              <div class="input-group input-group-outline w-100 is-filled">
+                <select name="empleado" id="id_empleado" class="form-control form-select" required>
+                  <option value="">-- Seleccione un empleado --</option>
+                  {% for emp in form.fields.empleado.queryset %}
+                    <option value="{{ emp.id }}" {% if form.empleado.value|stringformat:"s" == emp.id|stringformat:"s" %}selected{% endif %}>
+                      {{ emp.nombre }} ({{ emp.cedula }})
+                    </option>
+                  {% empty %}
+                    {% if empleados %}
+                      {% for emp in empleados %}
+                        <option value="{{ emp.id }}" {% if form.empleado.value|stringformat:"s" == emp.id|stringformat:"s" %}selected{% endif %}>
+                          {{ emp.nombre }} ({{ emp.cedula }})
+                        </option>
+                      {% endfor %}
+                    {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+              {% if form.empleado.errors %}
+              <div class="text-danger text-xs mt-1">
+                {{ form.empleado.errors|striptags }}
+              </div>
+              {% endif %}
+            </div>
+
+            <!-- Selector de Tipo de Transacción con HTMX -->
+            <div class="col-md-6 mb-3">
+              <label class="form-label font-weight-bold text-dark text-sm">Tipo de Transacción <span class="text-danger">*</span></label>
+              <div class="input-group input-group-outline w-100 is-filled">
+                <select name="tipo_transaccion" id="id_tipo_transaccion" class="form-control form-select"
+                        hx-get="{% url 'nomina:obtener_conceptos' %}"
+                        hx-target="#concepto-wrapper"
+                        hx-trigger="change"
+                        hx-include="this"
+                        required>
+                  <option value="">-- Seleccione tipo de transacción --</option>
+                  <option value="Ingreso" {% if form.tipo_transaccion.value == 'Ingreso' %}selected{% endif %}>Ingreso</option>
+                  <option value="Deducción" {% if form.tipo_transaccion.value == 'Deducción' or form.tipo_transaccion.value == 'Deduccion' %}selected{% endif %}>Deducción</option>
+                </select>
+              </div>
+              {% if form.tipo_transaccion.errors %}
+              <div class="text-danger text-xs mt-1">
+                {{ form.tipo_transaccion.errors|striptags }}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Contenedor dinámico de conceptos vía HTMX -->
+          <div id="concepto-wrapper" class="mb-3">
+            {% include 'nomina/transacciones/partials/opciones_concepto.html' with tipo=form.tipo_transaccion.value %}
+          </div>
+
+          <div class="row">
+            <!-- Campo de Fecha -->
+            <div class="col-md-4 mb-3">
+              <label class="form-label font-weight-bold text-dark text-sm">Fecha <span class="text-danger">*</span></label>
+              <div class="input-group input-group-outline w-100 is-filled">
+                <input type="date" name="fecha" id="id_fecha" class="form-control" value="{% if form.fecha.value %}{{ form.fecha.value|date:'Y-m-d' }}{% else %}{% now 'Y-m-d' %}{% endif %}" required>
+              </div>
+              {% if form.fecha.errors %}
+              <div class="text-danger text-xs mt-1">
+                {{ form.fecha.errors|striptags }}
+              </div>
+              {% endif %}
+            </div>
+
+            <!-- Campo de Monto -->
+            <div class="col-md-4 mb-3">
+              <label class="form-label font-weight-bold text-dark text-sm">Monto (RD$) <span class="text-danger">*</span></label>
+              <div class="input-group input-group-outline w-100 is-filled">
+                <input type="number" step="0.01" min="0.01" name="monto" id="id_monto" class="form-control" placeholder="0.00" value="{{ form.monto.value|default:'' }}" required>
+              </div>
+              <small class="text-muted text-xxs">Monto mayor a cero.</small>
+              {% if form.monto.errors %}
+              <div class="text-danger text-xs mt-1">
+                {{ form.monto.errors|striptags }}
+              </div>
+              {% endif %}
+            </div>
+
+            <!-- Selector de Estado -->
+            <div class="col-md-4 mb-3">
+              <label class="form-label font-weight-bold text-dark text-sm">Estado <span class="text-danger">*</span></label>
+              <div class="input-group input-group-outline w-100 is-filled">
+                <select name="estado" id="id_estado" class="form-control form-select" required>
+                  <option value="Pendiente" {% if form.estado.value == 'Pendiente' or not form.estado.value %}selected{% endif %}>Pendiente</option>
+                  <option value="Procesada" {% if form.estado.value == 'Procesada' %}selected{% endif %}>Procesada</option>
+                  <option value="Cancelada" {% if form.estado.value == 'Cancelada' %}selected{% endif %}>Cancelada</option>
+                </select>
+              </div>
+              {% if form.estado.errors %}
+              <div class="text-danger text-xs mt-1">
+                {{ form.estado.errors|striptags }}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end mt-4">
+            <a href="{% url 'nomina:transacciones_list' %}" class="btn btn-outline-secondary me-2 mb-0">
+              <i class="material-icons text-sm me-1">arrow_back</i> Cancelar
+            </a>
+            <button type="submit" class="btn bg-gradient-primary mb-0">
+              <i class="material-icons text-sm me-1">save</i> Registrar Transacción
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
