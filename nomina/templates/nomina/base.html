@@ -1,0 +1,175 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="76x76" href="{% static 'assets/img/apple-icon.png' %}">
+  <link rel="icon" type="image/png" href="{% static 'assets/img/favicon.png' %}">
+  <title>{% block title %}Sistema de Nómina{% endblock %}</title>
+
+  <!--     Fonts and icons     -->
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+  
+  <!-- Nucleo Icons -->
+  <link href="{% static 'assets/css/nucleo-icons.css' %}" rel="stylesheet" />
+  <link href="{% static 'assets/css/nucleo-svg.css' %}" rel="stylesheet" />
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+
+  <!-- CSS Files -->
+  <link id="pagestyle" href="{% static 'assets/css/material-dashboard.css' %}" rel="stylesheet" />
+
+  <!-- HTMX CDN -->
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body class="g-sidenav-show bg-gray-200" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+  <!-- Sidebar -->
+  <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-gradient-dark" id="sidenav-main">
+    <div class="sidenav-header">
+      <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
+      <a class="navbar-brand m-0 d-flex align-items-center" href="{% url 'nomina:empleados_list' %}">
+        <img src="{% static 'assets/img/logo-ct.png' %}" class="navbar-brand-img h-100 me-2" alt="main_logo">
+        <span class="font-weight-bold text-white">Sistema Nómina</span>
+      </a>
+    </div>
+    <hr class="horizontal light mt-0 mb-2">
+    <div class="collapse navbar-collapse w-auto h-auto" id="sidenav-collapse-main">
+      <ul class="navbar-nav">
+        <!-- Empleados -->
+        <li class="nav-item">
+          <a class="nav-link text-white {% if request.resolver_match and 'empleado' in request.resolver_match.url_name %}active bg-gradient-primary{% endif %}" href="{% url 'nomina:empleados_list' %}">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">badge</i>
+            </div>
+            <span class="nav-link-text ms-1">Empleados</span>
+          </a>
+        </li>
+
+        <!-- Tipos de Ingresos -->
+        <li class="nav-item">
+          <a class="nav-link text-white {% if request.resolver_match and 'ingreso' in request.resolver_match.url_name %}active bg-gradient-primary{% endif %}" href="{% url 'nomina:tipos_ingreso_list' %}">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">add_circle</i>
+            </div>
+            <span class="nav-link-text ms-1">Tipos de Ingresos</span>
+          </a>
+        </li>
+
+        <!-- Tipos de Deducciones -->
+        <li class="nav-item">
+          <a class="nav-link text-white {% if request.resolver_match and 'deduccion' in request.resolver_match.url_name %}active bg-gradient-primary{% endif %}" href="{% url 'nomina:tipos_deduccion_list' %}">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">remove_circle</i>
+            </div>
+            <span class="nav-link-text ms-1">Tipos de Deducciones</span>
+          </a>
+        </li>
+
+        <!-- Registro de Transacciones -->
+        <li class="nav-item">
+          <a class="nav-link text-white {% if request.resolver_match and 'transaccion' in request.resolver_match.url_name %}active bg-gradient-primary{% endif %}" href="{% url 'nomina:transacciones_list' %}">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">receipt_long</i>
+            </div>
+            <span class="nav-link-text ms-1">Registro de Transacciones</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </aside>
+  <!-- End Sidebar -->
+
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+    <!-- Navbar -->
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" data-scroll="true">
+      <div class="container-fluid py-1 px-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Páginas</a></li>
+            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">{% block page_title %}Sistema de Nómina{% endblock %}</li>
+          </ol>
+          <h6 class="font-weight-bolder mb-0">{% block breadcrumb_title %}Sistema de Nómina{% endblock %}</h6>
+        </nav>
+        <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+          <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+          </div>
+          <ul class="navbar-nav justify-content-end">
+            <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+              <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+                <div class="sidenav-toggler-inner">
+                  <i class="sidenav-toggler-line"></i>
+                  <i class="sidenav-toggler-line"></i>
+                  <i class="sidenav-toggler-line"></i>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- End Navbar -->
+
+    <!-- Main Content Container -->
+    <div class="container-fluid py-4">
+      {% if messages %}
+        <div class="row">
+          <div class="col-12">
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible text-white fade show" role="alert">
+                <span class="text-sm">{{ message }}</span>
+                <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% block content %}
+      {% endblock %}
+
+      <footer class="footer py-4">
+        <div class="container-fluid">
+          <div class="row align-items-center justify-content-lg-between">
+            <div class="col-lg-6 mb-lg-0 mb-4">
+              <div class="copyright text-center text-sm text-muted text-lg-start">
+                © {% now "Y" %}, Sistema de Gestión de Nómina
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </main>
+
+  <!-- Core JS Files -->
+  <script src="{% static 'assets/js/core/popper.min.js' %}"></script>
+  <script src="{% static 'assets/js/core/bootstrap.min.js' %}"></script>
+  <script src="{% static 'assets/js/plugins/perfect-scrollbar.min.js' %}"></script>
+  <script src="{% static 'assets/js/plugins/smooth-scrollbar.min.js' %}"></script>
+  <script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+  </script>
+  <script src="{% static 'assets/js/material-dashboard.min.js' %}"></script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+
+</html>
